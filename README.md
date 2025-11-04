@@ -42,6 +42,7 @@ Make sure to set the translation key for the 'selected' value.
 
 ## Usage/Examples
 
+### Simple array
 Supply the multi select livewire component with the right settings:
 
 ```\Mrjokermr\LivewireMultiSelect\Classes\MultiSelectSettings::simple()```
@@ -55,6 +56,36 @@ Pass your options to this function as an associative array — the array key wil
         \Mrjokermr\LivewireMultiSelect\Classes\MultiSelectSettings::simple(
             source: [1 => 'Example user', 2 => 'Second user'],
         )->setLabel('Users')->setCloseOnSelect(false)
+    "
+></livewire:multi-select>
+```
+
+### Via eloquent models:
+```php
+<livewire:multi-select
+    wire:model="users"
+    :multiSelectSettings="
+        \Mrjokermr\LivewireMultiSelect\Classes\MultiSelectSettings::eloquentModel(
+            class: \App\Models\User::class,
+            keyAttribute: 'id',
+            labelAttribute: 'name',
+            limit: 50, //Optional
+        )->setLabel('Users')
+    "
+></livewire:multi-select>
+```
+
+**You might also set the ```baseQuery``` for setting the base filter for the given options.**
+```php
+<livewire:multi-select
+    wire:model="users"
+    :multiSelectSettings="
+        \Mrjokermr\LivewireMultiSelect\Classes\MultiSelectSettings::eloquentModel(
+            class: \App\Models\User::class,
+            keyAttribute: 'id',
+            labelAttribute: 'name',
+            baseQuery: \App\Models\User::where('email', 'LIKE', '%example.com%')
+        )->setLabel('Users')
     "
 ></livewire:multi-select>
 ```
