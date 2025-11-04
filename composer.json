@@ -1,0 +1,21 @@
+{
+    "name": "mrjokermr/livewire-multi-select",
+    "type": "library",
+    "require": {
+        "php": "^8.2",
+        "illuminate/support": "^10 || ^11 || ^12",
+        "livewire/livewire": "^3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Mrjokermr\\LivewireMultiSelect\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Mrjokermr\\LivewireMultiSelect\\LivewireMultiSelectServiceProvider"
+            ]
+        }
+    }
+}
