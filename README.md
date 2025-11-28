@@ -51,7 +51,7 @@ Pass your options to this function as an associative array — the array key wil
 
 ```php
 <livewire:multi-select
-    wire:model="userIds" //Make sure the wire:model value is initiated as an empty array
+    wire:model="userIds" //Make sure the wire:model value is initiated as an (empty) array
     :multiSelectSettings="
         \Mrjokermr\LivewireMultiSelect\Classes\MultiSelectSettings::simple(
             source: [1 => 'Example user', 2 => 'Second user'],
@@ -73,6 +73,21 @@ Pass your options to this function as an associative array — the array key wil
         )->setLabel('Users')
     "
 ></livewire:multi-select>
+```
+
+### Handle value changes via Livewire Events:
+```php
+    MultiSelectSettings::simple(
+        source: Chapter::all()->mapWithKeys(fn ($chapter) => [$chapter->id => $chapter->name])->toArray(),
+        event: 'event_filter_chapters_updated',
+    )->setLabel('Chapters')->setCloseOnSelect(false);
+
+    //Event retreival after each value change:
+    #[On('event_filter_chapters_updated')]
+    public function multiSelectValueChanged(array $selection)
+    {
+        //implement code...
+    }
 ```
 
 **You might also set the ```baseQuery``` for setting the base filter for the given options.**
