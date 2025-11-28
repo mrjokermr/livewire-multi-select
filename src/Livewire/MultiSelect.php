@@ -33,6 +33,11 @@ class MultiSelect extends Component
             unset($selected[array_search($value, $selected)]);
             $this->selected = $selected;
         }
+
+        $eventName = $this->multiSelectSettings->getEventName();
+        if ($eventName !== null) {
+            $this->dispatch($eventName, selection: $this->selected);
+        }
     }
 
     #[Computed]
