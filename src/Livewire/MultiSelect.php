@@ -10,7 +10,7 @@ use Mrjokermr\LivewireMultiSelect\Classes\MultiSelectSettings;
 class MultiSelect extends Component
 {
     public MultiSelectSettings $multiSelectSettings;
-    public array $options = [];
+    public ?array $options = [];
     #[Modelable]
     public array $selected = [];
     public ?string $selectedTranslationKey = null;
@@ -18,6 +18,10 @@ class MultiSelect extends Component
 
     public function mount()
     {
+        if ($this->selected === null) {
+            $this->selected = [];
+        }
+        
         $this->options = $this->multiSelectSettings->getOptions();
         $this->selectedTranslationKey = config('multi-select.translations.selected');
 
