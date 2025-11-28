@@ -168,6 +168,11 @@ class MultiSelectSettings implements Wireable
         return $options;
     }
 
+    public function getEventName(): ?string
+    {
+        return $this->eventName;
+    }
+
     private function setType(MultiSelectType $type): self
     {
         $this->type = $type;
