@@ -51,7 +51,7 @@ Pass your options to this function as an associative array — the array key wil
 
 ```php
 <livewire:multi-select
-    wire:model="userIds" //Make sure the wire:model value is initiated as an (empty) array
+    wire:model="userIds"
     :multiSelectSettings="
         \Mrjokermr\LivewireMultiSelect\Classes\MultiSelectSettings::simple(
             source: [1 => 'Example user', 2 => 'Second user'],
