@@ -10,9 +10,9 @@ use Mrjokermr\LivewireMultiSelect\Classes\MultiSelectSettings;
 class MultiSelect extends Component
 {
     public MultiSelectSettings $multiSelectSettings;
-    public ?array $options = [];
+    public array $options = [];
     #[Modelable]
-    public array $selected = [];
+    public ?array $selected = [];
     public ?string $selectedTranslationKey = null;
     public ?string $searchValue = null;
 
