@@ -215,12 +215,6 @@ class SelectSettings implements Wireable
         }, ARRAY_FILTER_USE_BOTH);
     }
 
-    private function getFilteredOptions(string $searchValue): array
-    {
-        $options = $this->getOptions();
-        return array_filter($options, fn($label, $key) => stripos($label, $searchValue) !== false);
-    }
-
     private function getOptionsViaEloquent(?string $searchValue = null, null|string|array $extraSearchAttributes = null): array
     {
         $settings = $this->multiSelectEloquentSettings;
