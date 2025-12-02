@@ -16,6 +16,7 @@ class MultiSelect extends Component
     public ?array $singleSelectionValue = null;
     public ?string $selectedTranslationKey = null;
     public ?string $searchValue = null;
+    public ?string $name = null;
 
     public function mount()
     {
@@ -84,6 +85,11 @@ class MultiSelect extends Component
         if ($this->settings->isSingleValueMode()) {
             $value = $this->singleSelectionValue['value'] ?? '';
         } else {
+
+            if (count($this->selected) === 0 && !empty($this->settings->getPlaceholder())) {
+                return $this->settings->getPlaceholder();
+            }
+
             $value = '';
             if ($this->selectedTranslationKey) {
                 $translationValue = __($this->selectedTranslationKey);

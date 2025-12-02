@@ -18,6 +18,7 @@ class SelectSettings implements Wireable
     public array $cssClasses;
 
     public ?string $label = null;
+    private ?string $placeholder = null;
     private bool $closeOnSelect = true;
     private bool $withSearch = false;
     private string|array|null $searchAttributes = null;
@@ -90,6 +91,17 @@ class SelectSettings implements Wireable
         );
 
         return $instance;
+    }
+
+    public function setPlaceholder(string $placeholder): self
+    {
+        $this->placeholder = $placeholder;
+        return $this;
+    }
+
+    public function getPlaceholder(): ?string
+    {
+        return $this->placeholder;
     }
 
     public function setLabel(string $label): self
@@ -255,6 +267,7 @@ class SelectSettings implements Wireable
             'closeOnSelect' => $this->closeOnSelect,
             'multiSelectEloquentSettings' => $this->multiSelectEloquentSettings?->toLivewire(),
             'singleValue' => $this->singleValue,
+            'placeholder' => $this->placeholder ?? null,
         ];
     }
 
@@ -273,6 +286,7 @@ class SelectSettings implements Wireable
         $instance->closeOnSelect = $value['closeOnSelect'];
         $instance->multiSelectEloquentSettings = isset($value['multiSelectEloquentSettings']) ? SelectEloquentSettings::fromLivewire(value: $value['multiSelectEloquentSettings']) : null;
         $instance->singleValue = $value['singleValue'];
+        $instance->placeholder = $value['placeholder'] ?? null;
 
         return $instance;
     }

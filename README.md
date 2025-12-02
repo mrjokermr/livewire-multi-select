@@ -1,23 +1,26 @@
+# Livewire Multi Select
+A simple, yet powerful, multi-select component for Livewire 3. It uses native inline CSS for out-of-the-box compatibility but is fully customizable with your own CSS classes.
 
-# Livewire multi select
-
-**Simple Livewire 3 multi select box**
-
-Uses native inline css styling for compatability.
 ## Installation
 
-Install via composer:
+Install the package via composer:
 
 ```bash
 composer require mrjokermr/livewire-multi-select
 ```
 
-**Be sure to publish the configuration file so you can customize the CSS classes used to style this component.**
+Publish the configuration file to customize the component's appearance and behavior. This is a recommended step.
+
 ```bash
 php artisan vendor:publish --tag=multi-select-config
 ```
 
-## Config
+This will create a `config/multi-select.php` file in your application.
+
+## Configuration
+
+The published `config/multi-select.php` file allows you to set default behaviors and styling.
+
 ```php
 <?php
 return [
@@ -38,86 +41,111 @@ return [
     ]
 ];
 ```
-Make sure to set the translation key for the 'selected' value.
+- **`close_on_select_default`**: Determines if the dropdown should close automatically after selecting an option.
+- **`css_classes`**: Define the CSS classes for each part of the component to match your project's design system (e.g., Tailwind CSS, Bootstrap).
+- **`translations`**: Set the translation key for the "Selected" text displayed on the input. For example, you can set it to a key from your Laravel translation files.
 
-## Usage/Examples
+## Usage & Examples
 
-### Simple array
-Supply the multi select livewire component with the right settings:
+### Simple Array
 
-```\Mrjokermr\LivewireMultiSelect\Classes\SelectSettings::simple()```
+You can populate the select component with a simple associative array. The array key will be the option's value, and the array value will be the display label.
 
-Pass your options to this function as an associative array — the array key will be used as the option’s value, and the array value will be shown as the label.
+Use `\Mrjokermr\LivewireMultiSelect\Classes\SelectSettings::simple()` to create the settings.
 
 ```php
+// In your Livewire Component
 use Mrjokermr\LivewireMultiSelect\Classes\SelectSettings;
 
-$settings = SelectSettings::simple(
-    source: [1 => 'Example user', 2 => 'Second user'],
-)->setLabel('Users')->setCloseOnSelect(false)
+public function getSettings()
+{
+    return SelectSettings::simple(
+        source: [1 => 'Example user', 2 => 'Second user'],
+    )->setLabel('Users')->setCloseOnSelect(false);
+}
 
-//In render file:
+// In your Blade view
 <livewire:multi-select
     wire:model.live="userIds"
-    :settings="$settings"
-></livewire:multi-select>
+    :settings="$this->getSettings()"
+/>
 ```
 
-### Via eloquent models:
+### Eloquent Models
+
+Populate the options directly from an Eloquent model.
+
+Use `\Mrjokermr\LivewireMultiSelect\Classes\SelectSettings::eloquentModel()` to define the source model and attributes.
+
 ```php
+// In your Livewire Component
 use Mrjokermr\LivewireMultiSelect\Classes\SelectSettings;
+use App\Models\User;
 
-$settings = SelectSettings::eloquentModel(
-    class: \App\Models\User::class,
-    keyAttribute: 'id',
-    labelAttribute: 'name',
-    limit: 50, //Optional
-)->setLabel('Users')
+public function getSettings()
+{
+    return SelectSettings::eloquentModel(
+        class: User::class,
+        keyAttribute: 'id',
+        labelAttribute: 'name',
+        limit: 50, // Optional
+    )->setLabel('Users');
+}
 
-//In render file:
+// In your Blade view
 <livewire:multi-select
     wire:model.live="users"
-    :settings="$settings"
-></livewire:multi-select>
+    :settings="$this->getSettings()"
+/>
 ```
 
-### Single value mode
-Be aware that the value is an array.
+### Single Value Mode
+
+To allow only a single selection, chain the `->singleValueMode()` method. The `wire:model` property will hold a single value instead of an `array`.
+
 ```php
+// In your Livewire Component
 use Mrjokermr\LivewireMultiSelect\Classes\SelectSettings;
+use App\Models\User;
 
-$settings = SelectSettings::eloquentModel(
-    class: \App\Models\User::class,
-    keyAttribute: 'id',
-    labelAttribute: 'name',
-    limit: 50, //Optional
-)->singleValueMode()
+public function getSettings()
+{
+    return SelectSettings::eloquentModel(
+        class: User::class,
+        keyAttribute: 'id',
+        labelAttribute: 'name',
+    )->singleValueMode();
+}
 
-//In render file:
+// In your Blade view
 <livewire:multi-select
     wire:model.live="user"
-    :settings="$settings"
-></livewire:multi-select>
+    :settings="$this->getSettings()"
+/>
 ```
 
-### Enable search for results
+### Search Functionality
+
+Enable a search input within the dropdown to filter options by chaining the `->enableSearch()` method.
+
 ```php
 use Mrjokermr\LivewireMultiSelect\Classes\SelectSettings;
 
+// For Eloquent models
 SelectSettings::eloquentModel(
     class: \App\Models\User::class,
     keyAttribute: 'id',
     labelAttribute: 'name',
-)->enableSearch()
+)->enableSearch();
 
-//Or via SelectSettings::simple
+// For simple arrays
 SelectSettings::simple(
     source: [1 => 'Example user', 2 => 'Second user'],
-)->enableSearch()
+)->enableSearch();
 ```
 
+For Eloquent sources, you can specify additional attributes to search against.
 
-The ```labelAttribute``` attribute is always used for searching when having ```SelectSettings::eloquentModel()```, but you can add more attributes by passing ```searchAttributes:``` to the enableSearch() method.
 ```php
 use Mrjokermr\LivewireMultiSelect\Classes\SelectSettings;
 
@@ -125,100 +153,105 @@ SelectSettings::eloquentModel(
     class: \App\Models\User::class,
     keyAttribute: 'id',
     labelAttribute: 'name',
-)->enableSearch(searchAttributes: ['email'])
+)->enableSearch(attributes: ['email']); // Searches 'name' and 'email'
 ```
 
-In the config you might set the styling for this search input element or use the setCssClasses() method
+In the config you might set the styling for search input element or use the ```setCssClasses(inputSearch: '.class-name')``` method
 ```php
-use Mrjokermr\LivewireMultiSelect\Classes\SelectSettings;
-
-SelectSettings::eloquentModel(
-    class: \App\Models\User::class,
-    keyAttribute: 'id',
-    labelAttribute: 'name',
-)->setCssClasses(
+->setCssClasses(
     inputSearch: 'input-search',
 )
 ```
 
-### Handle value changes via Livewire Events:
-You might want to handle values changes via Livewire events, but it is not required since wire:model(.live) will also trigger value changes.
+### Livewire Events
+
+To handle value changes with Livewire events instead of `wire:model`, you can specify an event name. This is useful for triggering actions in parent components.
+
 ```php
+// In your Livewire Component
+use Livewire\Attributes\On;
 use Mrjokermr\LivewireMultiSelect\Classes\SelectSettings;
+use App\Models\Chapter;
 
-SelectSettings::simple(
-    source: Chapter::all()->mapWithKeys(fn ($chapter) => [$chapter->id => $chapter->name])->toArray(),
-    event: 'event_filter_chapters_updated',
-)->setLabel('Chapters')->setCloseOnSelect(false);
-
-//Event retrieval after each value change:
-#[On('event_filter_chapters_updated')]
-public function multiSelectValueChanged(array $selection)
+public function getSettings()
 {
-    //implement code...
+    return SelectSettings::simple(
+        source: Chapter::all()->pluck('name', 'id')->toArray(),
+        event: 'chapters_updated',
+    )->setLabel('Chapters');
+}
+
+// Listen for the event
+#[On('chapters_updated')]
+public function handleChapterSelection(array $selection)
+{
+    // $selection contains the array of selected chapter IDs
 }
 ```
 
-**You might also set the ```baseQuery``` for setting the base filter for the given options.**
+### Pre-filtering with Base Query
+
+When using `eloquentModel`, you can provide a `baseQuery` to apply a permanent filter to the available options.
+
 ```php
 use Mrjokermr\LivewireMultiSelect\Classes\SelectSettings;
+use App\Models\User;
 
-$settings = SelectSettings::eloquentModel(
-    class: \App\Models\User::class,
-    keyAttribute: 'id',
-    labelAttribute: 'name',
-    baseQuery: \App\Models\User::where('email', 'LIKE', '%example.com%')
-)->setLabel('Users')
+public function getSettings()
+{
+    return SelectSettings::eloquentModel(
+        class: User::class,
+        keyAttribute: 'id',
+        labelAttribute: 'name',
+        baseQuery: User::where('email', 'LIKE', '%example.com%')
+    )->setLabel('Users');
+}
 
-//In render file:
+// In your Blade view
 <livewire:multi-select
     wire:model.live="users"
-    :settings="$settings"
-></livewire:multi-select>
+    :settings="$this->getSettings()"
+/>
 ```
 
-### Customization:
+## Customization
 
-**Without label:**
+You can customize each instance of the component using fluent methods.
 
-```->setLabel()```
+### Customizing the Label
 
-**Example:**
+Set a display label for the input. It can be omitted by not calling the method.
+```php
+->setLabel('Regions')
+```
 ```php
 ->setLabel(__('regions.title'))
-//or:
-->setLabel('Label text')
 ```
 
-**Overwrite config styling classes:**
+### Setting the Placeholder
+```php
+->setPlaceholder('Select users')
+```
 
-```->setCssClasses()```
+### Overriding CSS Classes
 
-**Example:**
-Each ```null``` value will default to config value.
+Override the default or configured CSS classes for a specific component instance. Any `null` values will fall back to the classes defined in `config/multi-select.php`.
 
 ```php
 ->setCssClasses(
-    input: 'input',
-    inputSearch: 'input-search',
-    label: null,
-    listBox: 'list-box',
-    listBoxOptionWrapper: 'list-box-option-wrapper', //ul
-    listBoxOption: 'list-box-option', //li
-    inputErrorLabel: 'input-error-label',
+    input: '.class',
+    inputSearch: '.class',
+    label: '.class',
+    listBox: '.class',
+    listBoxOptionWrapper: '.class', //ul
+    listBoxOption: '.class', //li
+    inputErrorLabel: '.class',
 )
 ```
-This way you can style each individual multi select box
 
-**Automatically close on select:**
+### Close on Select Behavior
 
-```->setCloseOnSelect()```
+Control whether the dropdown closes after an option is selected. The default is configured in `config/multi-select.php`.
 
-**Example:**
 ```php
-->setCloseOnSelect(false)
-```
-
-**You might change the default value in the config:**
-
-```close_on_select_default```
+->setCloseOnSelect(false) // Keep the dropdown open after selection

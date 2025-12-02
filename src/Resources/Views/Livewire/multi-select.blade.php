@@ -17,12 +17,17 @@
     @endif
     <input
         id="input_search_{{ $settings->id }}"
-        name="input_search_{{ $settings->id }}"
         readonly
         x-ref="input"
         @focus="open=true; setWidth()"
         class="{{ $settings->cssClasses['input'] }}"
         value="{{ $this->selectedString }}"
+        @if (!empty($settings->getPlaceholder()))
+            placeholder="{{ $settings->getPlaceholder() }}"
+        @endif
+        @if (!empty($name))
+            name="{{ $name }}"
+        @endifß
         autocomplete="off"
         role="combobox"
         :aria-expanded="open"
