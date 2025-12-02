@@ -12,14 +12,18 @@ class MultiSelect extends Component
     public SelectSettings $settings;
     public array $options = [];
     #[Modelable]
-    public ?array $selected = [];
+    public mixed $selected = [];
     public ?string $selectedTranslationKey = null;
     public ?string $searchValue = null;
 
     public function mount()
     {
         if ($this->selected === null) {
-            $this->selected = [];
+            if ($this->settings->isSingleValueMode()) {
+                $this->selected = null;
+            } else {
+                $this->selected = [];
+            }
         }
 
         $this->options = $this->settings->getOptions();
@@ -30,12 +34,16 @@ class MultiSelect extends Component
 
     public function toggleSelect($value)
     {
-        if (!in_array($value, $this->selected)) {
-            $this->selected[] = $value;
+        if ($this->settings->isSingleValueMode()) {
+            $this->selected = $value;
         } else {
-            $selected = $this->selected;
-            unset($selected[array_search($value, $selected)]);
-            $this->selected = $selected;
+            if (!in_array($value, $this->selected)) {
+                $this->selected[] = $value;
+            } else {
+                $selected = $this->selected;
+                unset($selected[array_search($value, $selected)]);
+                $this->selected = $selected;
+            }
         }
 
         $eventName = $this->settings->getEventName();
@@ -47,18 +55,28 @@ class MultiSelect extends Component
     #[Computed]
     public function selectedString(): string
     {
-        $value = '';
-        if ($this->selectedTranslationKey) {
-            $translationValue = __($this->selectedTranslationKey);
-            if (trim($translationValue) === '' || $translationValue === null) {
-                $translationValue = 'Selected';
+        if ($this->settings->isSingleValueMode()) {
+            $key = $this->selected[0] ?? null;
+            if ($key) {
+                $value = $this->options[$key] ?? '';
+            } else {
+                $value = '';
             }
-            $value .= trim($translationValue).' ';
         } else {
-            $value .= 'Selected ';
+            $value = '';
+            if ($this->selectedTranslationKey) {
+                $translationValue = __($this->selectedTranslationKey);
+                if (trim($translationValue) === '' || $translationValue === null) {
+                    $translationValue = 'Selected';
+                }
+                $value .= trim($translationValue).' ';
+            } else {
+                $value .= 'Selected ';
+            }
+
+            $value .= count($this->selected);
         }
 
-        $value .= count($this->selected);
         return $value;
     }
 

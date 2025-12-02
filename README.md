@@ -83,6 +83,25 @@ $settings = SelectSettings::eloquentModel(
 ></livewire:multi-select>
 ```
 
+### Single value mode
+Be aware that the value is an array.
+```php
+use Mrjokermr\LivewireMultiSelect\Classes\SelectSettings;
+
+$settings = SelectSettings::eloquentModel(
+    class: \App\Models\User::class,
+    keyAttribute: 'id',
+    labelAttribute: 'name',
+    limit: 50, //Optional
+)->singleValueMode()
+
+//In render file:
+<livewire:multi-select
+    wire:model.live="user"
+    :settings="$settings"
+></livewire:multi-select>
+```
+
 ### Handle value changes via Livewire Events:
 You might want to handle values changes via Livewire events, but it is not required since wire:model(.live) will also trigger value changes.
 ```php

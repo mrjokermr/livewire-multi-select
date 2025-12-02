@@ -21,6 +21,7 @@ class SelectSettings implements Wireable
     private bool $closeOnSelect = true;
     private bool $withSearch = false;
     private ?string $eventName = null;
+    private bool $singleValue = false;
 
     public function __construct()
     {
@@ -141,6 +142,17 @@ class SelectSettings implements Wireable
         return $this;
     }
 
+    public function singleValueMode(): self
+    {
+        $this->singleValue = true;
+        return $this;
+    }
+
+    public function isSingleValueMode(): bool
+    {
+        return $this->singleValue;
+    }
+
     public function showSearch(): bool
     {
         return $this->withSearch;
@@ -206,6 +218,7 @@ class SelectSettings implements Wireable
             'eventName' => $this->eventName,
             'closeOnSelect' => $this->closeOnSelect,
             'multiSelectEloquentSettings' => $this->multiSelectEloquentSettings?->toLivewire(),
+            'singleValue' => $this->singleValue,
         ];
     }
 
@@ -222,6 +235,7 @@ class SelectSettings implements Wireable
         $instance->eventName = $value['eventName'] ?? null;
         $instance->closeOnSelect = $value['closeOnSelect'];
         $instance->multiSelectEloquentSettings = isset($value['multiSelectEloquentSettings']) ? SelectEloquentSettings::fromLivewire(value: $value['multiSelectEloquentSettings']) : null;
+        $instance->singleValue = $value['singleValue'];
 
         return $instance;
     }

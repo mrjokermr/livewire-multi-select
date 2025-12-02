@@ -71,7 +71,7 @@
                     @endif
                     role="option"
                 >
-                    @if (in_array($value, $this->selected))
+                    @if ((!$settings->isSingleValueMode() && in_array($value, $this->selected)) || ($settings->isSingleValueMode() && $value == $this->selected))
                         <span>✓</span>
                     @endif
                     <span>{{ $label }}</span>
