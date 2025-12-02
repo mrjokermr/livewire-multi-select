@@ -13,6 +13,7 @@ class MultiSelect extends Component
     public array $options = [];
     #[Modelable]
     public mixed $selected = [];
+    public ?string $singleSelectionValue = null;
     public ?string $selectedTranslationKey = null;
     public ?string $searchValue = null;
 
@@ -32,10 +33,16 @@ class MultiSelect extends Component
         $this->selectedString();
     }
 
+    public function updatedSearchValue(string $value)
+    {
+        $this->options = $this->settings->getOptions(searchValue: $value);
+    }
+
     public function toggleSelect($value)
     {
         if ($this->settings->isSingleValueMode()) {
             $this->selected = $value;
+            $this->singleSelectionValue = $this->options[$value];
         } else {
             if (!in_array($value, $this->selected)) {
                 $this->selected[] = $value;
@@ -44,6 +51,11 @@ class MultiSelect extends Component
                 unset($selected[array_search($value, $selected)]);
                 $this->selected = $selected;
             }
+        }
+
+        if ($this->settings->getCloseOnSelect() && !empty($this->searchValue)) {
+            $this->searchValue = null;
+            $this->options = $this->settings->getOptions();
         }
 
         $eventName = $this->settings->getEventName();
@@ -56,12 +68,7 @@ class MultiSelect extends Component
     public function selectedString(): string
     {
         if ($this->settings->isSingleValueMode()) {
-            $key = $this->selected[0] ?? null;
-            if ($key) {
-                $value = $this->options[$key] ?? '';
-            } else {
-                $value = '';
-            }
+            $value = $this->singleSelectionValue ?? '';
         } else {
             $value = '';
             if ($this->selectedTranslationKey) {

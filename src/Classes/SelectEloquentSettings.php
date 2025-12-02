@@ -38,16 +38,22 @@ class SelectEloquentSettings implements Wireable
         );
     }
 
-    public function getQueryBuilder(): QueryBuilder|BuilderContract
+    public function getQueryBuilder(?string $searchValue): QueryBuilder|BuilderContract
     {
         if ($this->query !== null) {
-            return DB::table(DB::raw("({$this->query}) as sub"))->setBindings($this->queryBindings);
+            $query = DB::table(DB::raw("({$this->query}) as sub"))->setBindings($this->queryBindings);
         } else {
             /** @var Model $class */
             $class = $this->class;
 
-            return $class::query();
+            $query = $class::query();
         }
+
+        if (!empty($searchValue)) {
+            $query->where($this->labelAttribute, 'like', "%{$searchValue}%");
+        }
+
+        return $query->limit($this->limit);
     }
 
     public function toLivewire(): array

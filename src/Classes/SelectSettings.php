@@ -169,21 +169,59 @@ class SelectSettings implements Wireable
         return $this->closeOnSelect;
     }
 
-    public function getOptions(): array
+    public function getOptions(?string $searchValue = null): array
     {
         if ($this->type === MultiSelectType::FIXED_OPTIONS) {
-            return $this->options ?? [];
+            $options = $this->options ?? [];
+            if (!empty($searchValue)) {
+                return $this->filterOptions(options: $options, searchValue: $searchValue);
+            } else {
+                return $options;
+            }
         } elseif ($this->type === MultiSelectType::ELOQUENT) {
-            return $this->getOptionsViaEloquent();
+            return $this->getOptionsViaEloquent(searchValue: $searchValue);
         }
 
         return [];
     }
 
-    private function getOptionsViaEloquent(): array
+    protected function likeMatch(string $haystack, string $pattern): bool
+    {
+        // Escape regex special chars first, then translate SQL wildcards
+        $escaped = preg_quote($pattern, '/');
+        $regex = '/^' .
+            str_replace(['%', '_'], ['.*', '.'], $escaped) .
+            '$/iu';
+
+        return (bool) preg_match($regex, $haystack);
+    }
+
+    protected function filterOptions(array $options, ?string $searchValue): array
+    {
+        $searchValue = trim((string) $searchValue);
+        if ($searchValue === '') return $options;
+
+        $pattern = '%' . $searchValue . '%';
+
+        return array_filter($options, function ($option, $key) use ($pattern) {
+            $haystack = is_array($option)
+                ? ($option['label'] ?? $option['name'] ?? '')
+                : (string) $option;
+
+            return $this->likeMatch($haystack, $pattern);
+        }, ARRAY_FILTER_USE_BOTH);
+    }
+
+    private function getFilteredOptions(string $searchValue): array
+    {
+        $options = $this->getOptions();
+        return array_filter($options, fn($label, $key) => stripos($label, $searchValue) !== false);
+    }
+
+    private function getOptionsViaEloquent(?string $searchValue = null): array
     {
         $settings = $this->multiSelectEloquentSettings;
-        $baseQuery = $settings->getQueryBuilder();
+        $baseQuery = $settings->getQueryBuilder(searchValue: $searchValue);
 
         $optionsCollection = $baseQuery->select([$settings->keyAttribute, $settings->labelAttribute])->get();
 
