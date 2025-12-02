@@ -45,6 +45,23 @@ return [
 - **`css_classes`**: Define the CSS classes for each part of the component to match your project's design system (e.g., Tailwind CSS, Bootstrap).
 - **`translations`**: Set the translation key for the "Selected" text displayed on the input. For example, you can set it to a key from your Laravel translation files.
 
+## Quick nav
+
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Usage & Examples](#usage--examples)
+    - [Simple Array](#simple-array)
+    - [Eloquent Models](#eloquent-models)
+    - [Single Value Mode](#single-value-mode)
+    - [Search Functionality](#search-functionality)
+    - [Livewire Events](#livewire-events)
+    - [Pre-filtering with Base Query](#pre-filtering-with-base-query)
+- [Customization](#customization)
+    - [Customizing the Label](#customizing-the-label)
+    - [Setting the Placeholder](#setting-the-placeholder)
+    - [Overriding CSS Classes](#overriding-css-classes)
+    - [Close on Select Behavior](#close-on-select-behavior)
+
 ## Usage & Examples
 
 ### Simple Array
