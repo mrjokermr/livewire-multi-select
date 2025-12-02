@@ -12,7 +12,8 @@
     @keydown.escape.window="open=false"
 >
     @if ($settings->label !== null)
-        <label for="input_search_{{ $settings->id }}" class="{{ $settings->cssClasses['label'] }}">{{ $settings->label }}</label>
+        <label for="input_search_{{ $settings->id }}"
+               class="{{ $settings->cssClasses['label'] }}">{{ $settings->label }}</label>
     @endif
     <input
         id="input_search_{{ $settings->id }}"
@@ -40,7 +41,7 @@
         :style="`${base}; min-width:${menuWidth}px`"
         role="listbox"
     >
-        @if ($settings->showSearch())
+        @if ($settings->getWithSearch())
             <input
                 @if(!empty($settings->cssClasses['input_search']))
                     class="{{ $settings->cssClasses['input_search'] }}"
@@ -65,7 +66,8 @@
                         @mousedown.prevent.stop="$wire.toggleSelect('{{ $value }}'); open=true"
                     @endif
                     @if ($settings->cssClasses['list_box_option'] === null)
-                        style="display:flex; width:100%; align-items:center; gap:0.5rem; padding:0.5rem 0.75rem; text-align:left; cursor:pointer;" onmouseover="this.style.backgroundColor='#f3f4f6'" onmouseout="this.style.backgroundColor=''"
+                        style="display:flex; width:100%; align-items:center; gap:0.5rem; padding:0.5rem 0.75rem; text-align:left; cursor:pointer;"
+                    onmouseover="this.style.backgroundColor='#f3f4f6'" onmouseout="this.style.backgroundColor=''"
                     @else
                         class="{{ $settings->cssClasses['list_box_option'] }}"
                     @endif
@@ -80,5 +82,7 @@
         </ul>
     </div>
 
-    <style>[x-cloak]{display:none !important}</style>
+    <style>[x-cloak] {
+            display: none !important
+        }</style>
 </div>

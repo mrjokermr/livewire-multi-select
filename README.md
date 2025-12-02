@@ -40,8 +40,6 @@ return [
 ```
 Make sure to set the translation key for the 'selected' value.
 
-
-
 ## Usage/Examples
 
 ### Simple array
@@ -100,6 +98,47 @@ $settings = SelectSettings::eloquentModel(
     wire:model.live="user"
     :settings="$settings"
 ></livewire:multi-select>
+```
+
+### Enable search for results
+```php
+use Mrjokermr\LivewireMultiSelect\Classes\SelectSettings;
+
+SelectSettings::eloquentModel(
+    class: \App\Models\User::class,
+    keyAttribute: 'id',
+    labelAttribute: 'name',
+)->enableSearch()
+
+//Or via SelectSettings::simple
+SelectSettings::simple(
+    source: [1 => 'Example user', 2 => 'Second user'],
+)->enableSearch()
+```
+
+
+The ```labelAttribute``` attribute is always used for searching when having ```SelectSettings::eloquentModel()```, but you can add more attributes by passing ```searchAttributes:``` to the enableSearch() method.
+```php
+use Mrjokermr\LivewireMultiSelect\Classes\SelectSettings;
+
+SelectSettings::eloquentModel(
+    class: \App\Models\User::class,
+    keyAttribute: 'id',
+    labelAttribute: 'name',
+)->enableSearch(searchAttributes: ['email'])
+```
+
+In the config you might set the styling for this search input element or use the setCssClasses() method
+```php
+use Mrjokermr\LivewireMultiSelect\Classes\SelectSettings;
+
+SelectSettings::eloquentModel(
+    class: \App\Models\User::class,
+    keyAttribute: 'id',
+    labelAttribute: 'name',
+)->setCssClasses(
+    inputSearch: 'input-search',
+)
 ```
 
 ### Handle value changes via Livewire Events:

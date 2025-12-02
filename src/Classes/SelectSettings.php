@@ -20,6 +20,8 @@ class SelectSettings implements Wireable
     public ?string $label = null;
     private bool $closeOnSelect = true;
     private bool $withSearch = false;
+    private string|array|null $searchAttributes = null;
+
     private ?string $eventName = null;
     private bool $singleValue = false;
 
@@ -136,9 +138,10 @@ class SelectSettings implements Wireable
         return $this;
     }
 
-    public function enableSearch(bool $value = true): self
+    public function enableSearch(string|array|null $attributes = null, bool $value = true): self
     {
         $this->withSearch = $value;
+        $this->searchAttributes = $attributes;
         return $this;
     }
 
@@ -153,7 +156,7 @@ class SelectSettings implements Wireable
         return $this->singleValue;
     }
 
-    public function showSearch(): bool
+    public function getWithSearch(): bool
     {
         return $this->withSearch;
     }
@@ -179,7 +182,7 @@ class SelectSettings implements Wireable
                 return $options;
             }
         } elseif ($this->type === MultiSelectType::ELOQUENT) {
-            return $this->getOptionsViaEloquent(searchValue: $searchValue);
+            return $this->getOptionsViaEloquent(searchValue: $searchValue, extraSearchAttributes: $this->searchAttributes);
         }
 
         return [];
@@ -218,10 +221,10 @@ class SelectSettings implements Wireable
         return array_filter($options, fn($label, $key) => stripos($label, $searchValue) !== false);
     }
 
-    private function getOptionsViaEloquent(?string $searchValue = null): array
+    private function getOptionsViaEloquent(?string $searchValue = null, null|string|array $extraSearchAttributes = null): array
     {
         $settings = $this->multiSelectEloquentSettings;
-        $baseQuery = $settings->getQueryBuilder(searchValue: $searchValue);
+        $baseQuery = $settings->getQueryBuilder(searchValue: $searchValue, extraSearchAttributes: $extraSearchAttributes);
 
         $optionsCollection = $baseQuery->select([$settings->keyAttribute, $settings->labelAttribute])->get();
 
@@ -253,6 +256,7 @@ class SelectSettings implements Wireable
             'cssClasses' => $this->cssClasses,
             'label'    => $this->label,
             'withSearch' => $this->withSearch,
+            'searchAttributes' => $this->searchAttributes,
             'eventName' => $this->eventName,
             'closeOnSelect' => $this->closeOnSelect,
             'multiSelectEloquentSettings' => $this->multiSelectEloquentSettings?->toLivewire(),
@@ -270,6 +274,7 @@ class SelectSettings implements Wireable
         $instance->cssClasses = $value['cssClasses'] ?? config('multi-select.css_classes');
         $instance->label = $value['label'] ?? null;
         $instance->withSearch = $value['withSearch'];
+        $instance->searchAttributes = $value['searchAttributes'] ?? null;
         $instance->eventName = $value['eventName'] ?? null;
         $instance->closeOnSelect = $value['closeOnSelect'];
         $instance->multiSelectEloquentSettings = isset($value['multiSelectEloquentSettings']) ? SelectEloquentSettings::fromLivewire(value: $value['multiSelectEloquentSettings']) : null;

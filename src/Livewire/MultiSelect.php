@@ -13,7 +13,7 @@ class MultiSelect extends Component
     public array $options = [];
     #[Modelable]
     public mixed $selected = [];
-    public ?string $singleSelectionValue = null;
+    public ?array $singleSelectionValue = null;
     public ?string $selectedTranslationKey = null;
     public ?string $searchValue = null;
 
@@ -27,7 +27,7 @@ class MultiSelect extends Component
             }
         }
 
-        $this->options = $this->settings->getOptions();
+        $this->setOptions();
         $this->selectedTranslationKey = config('multi-select.translations.selected');
 
         $this->selectedString();
@@ -38,11 +38,25 @@ class MultiSelect extends Component
         $this->options = $this->settings->getOptions(searchValue: $value);
     }
 
+    private function setOptions()
+    {
+        $this->options = $this->settings->getOptions(searchValue: $this->searchValue);
+        if ($this->settings->isSingleValueMode() && $this->singleSelectionValue !== null) {
+            $valueInArray = ($this->options[$this->singleSelectionValue['key']] ?? null) !== null;
+            if (!$valueInArray) {
+                $this->options[$this->singleSelectionValue['key']] = $this->singleSelectionValue['value'];
+            }
+        }
+    }
+
     public function toggleSelect($value)
     {
         if ($this->settings->isSingleValueMode()) {
             $this->selected = $value;
-            $this->singleSelectionValue = $this->options[$value];
+            $this->singleSelectionValue = [
+                'key' => $value,
+                'value' => $this->options[$value]
+            ];
         } else {
             if (!in_array($value, $this->selected)) {
                 $this->selected[] = $value;
@@ -55,7 +69,7 @@ class MultiSelect extends Component
 
         if ($this->settings->getCloseOnSelect() && !empty($this->searchValue)) {
             $this->searchValue = null;
-            $this->options = $this->settings->getOptions();
+            $this->setOptions();
         }
 
         $eventName = $this->settings->getEventName();
@@ -68,7 +82,7 @@ class MultiSelect extends Component
     public function selectedString(): string
     {
         if ($this->settings->isSingleValueMode()) {
-            $value = $this->singleSelectionValue ?? '';
+            $value = $this->singleSelectionValue['value'] ?? '';
         } else {
             $value = '';
             if ($this->selectedTranslationKey) {

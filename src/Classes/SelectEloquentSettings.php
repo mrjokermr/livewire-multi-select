@@ -38,7 +38,7 @@ class SelectEloquentSettings implements Wireable
         );
     }
 
-    public function getQueryBuilder(?string $searchValue): QueryBuilder|BuilderContract
+    public function getQueryBuilder(?string $searchValue, null|string|array $extraSearchAttributes = null): QueryBuilder|BuilderContract
     {
         if ($this->query !== null) {
             $query = DB::table(DB::raw("({$this->query}) as sub"))->setBindings($this->queryBindings);
@@ -50,7 +50,18 @@ class SelectEloquentSettings implements Wireable
         }
 
         if (!empty($searchValue)) {
-            $query->where($this->labelAttribute, 'like', "%{$searchValue}%");
+            if ($extraSearchAttributes !== null) {
+                $extraSearchAttributes = is_string($extraSearchAttributes) ? [$extraSearchAttributes] : $extraSearchAttributes;
+                $extraSearchAttributes[] = $this->labelAttribute;
+
+                $query->where(function ($query) use ($searchValue, $extraSearchAttributes) {
+                    foreach ($extraSearchAttributes as $attribute) {
+                        $query->orWhere($attribute, 'like', "%{$searchValue}%");
+                    }
+                });
+            } else {
+                $query->where($this->labelAttribute, 'like', "%{$searchValue}%");
+            }
         }
 
         return $query->limit($this->limit);
