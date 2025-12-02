@@ -9,7 +9,7 @@ use \Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Wireable;
 
-class MultiSelectEloquentSettings implements Wireable
+class SelectEloquentSettings implements Wireable
 {
     public function __construct(
         private string $class,

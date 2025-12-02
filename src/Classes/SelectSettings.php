@@ -9,11 +9,11 @@ use Illuminate\Contracts\Database\Eloquent\Builder as BuilderContract;
 use \Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Eloquent\Builder;
 
-class MultiSelectSettings implements Wireable
+class SelectSettings implements Wireable
 {
     public string $id;
     public MultiSelectType $type;
-    public ?MultiSelectEloquentSettings $multiSelectEloquentSettings = null;
+    public ?SelectEloquentSettings $multiSelectEloquentSettings = null;
     public ?array $options = null;
     public array $cssClasses;
 
@@ -44,7 +44,7 @@ class MultiSelectSettings implements Wireable
      *  - An array of key/value pairs (['value' => 'Label'])
      *
      * @param array<string|int, string> $source
-     * @return MultiSelectSettings
+     * @return SelectSettings
      */
     public static function simple(array $source, ?string $event = null): self
     {
@@ -60,7 +60,7 @@ class MultiSelectSettings implements Wireable
      * @param string $labelAttribute
      * @param string|null $event
      * @param Builder|QueryBuilder|BuilderContract|null $baseQuery
-     * @return MultiSelectSettings
+     * @return SelectSettings
      * @throws Exception
      */
     public static function eloquentModel(
@@ -78,7 +78,7 @@ class MultiSelectSettings implements Wireable
 
         $instance = self::create(event: $event)->setType(type: MultiSelectType::ELOQUENT);
 
-        $instance->multiSelectEloquentSettings = MultiSelectEloquentSettings::make(
+        $instance->multiSelectEloquentSettings = SelectEloquentSettings::make(
             class: $class,
             keyAttribute: $keyAttribute,
             labelAttribute: $labelAttribute,
@@ -206,7 +206,7 @@ class MultiSelectSettings implements Wireable
         $instance->withSearch = $value['withSearch'];
         $instance->eventName = $value['eventName'] ?? null;
         $instance->closeOnSelect = $value['closeOnSelect'];
-        $instance->multiSelectEloquentSettings = isset($value['multiSelectEloquentSettings']) ? MultiSelectEloquentSettings::fromLivewire(value: $value['multiSelectEloquentSettings']) : null;
+        $instance->multiSelectEloquentSettings = isset($value['multiSelectEloquentSettings']) ? SelectEloquentSettings::fromLivewire(value: $value['multiSelectEloquentSettings']) : null;
 
         return $instance;
     }

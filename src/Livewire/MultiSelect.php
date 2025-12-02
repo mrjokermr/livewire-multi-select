@@ -5,11 +5,11 @@ namespace Mrjokermr\LivewireMultiSelect\Livewire;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Modelable;
 use Livewire\Component;
-use Mrjokermr\LivewireMultiSelect\Classes\MultiSelectSettings;
+use Mrjokermr\LivewireMultiSelect\Classes\SelectSettings;
 
 class MultiSelect extends Component
 {
-    public MultiSelectSettings $multiSelectSettings;
+    public SelectSettings $settings;
     public array $options = [];
     #[Modelable]
     public ?array $selected = [];
@@ -21,8 +21,8 @@ class MultiSelect extends Component
         if ($this->selected === null) {
             $this->selected = [];
         }
-        
-        $this->options = $this->multiSelectSettings->getOptions();
+
+        $this->options = $this->settings->getOptions();
         $this->selectedTranslationKey = config('multi-select.translations.selected');
 
         $this->selectedString();
@@ -38,7 +38,7 @@ class MultiSelect extends Component
             $this->selected = $selected;
         }
 
-        $eventName = $this->multiSelectSettings->getEventName();
+        $eventName = $this->settings->getEventName();
         if ($eventName !== null) {
             $this->dispatch($eventName, selection: $this->selected);
         }

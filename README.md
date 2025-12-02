@@ -45,63 +45,74 @@ Make sure to set the translation key for the 'selected' value.
 ### Simple array
 Supply the multi select livewire component with the right settings:
 
-```\Mrjokermr\LivewireMultiSelect\Classes\MultiSelectSettings::simple()```
+```\Mrjokermr\LivewireMultiSelect\Classes\SelectSettings::simple()```
 
 Pass your options to this function as an associative array — the array key will be used as the option’s value, and the array value will be shown as the label.
 
 ```php
+use Mrjokermr\LivewireMultiSelect\Classes\SelectSettings;
+
+$settings = SelectSettings::simple(
+    source: [1 => 'Example user', 2 => 'Second user'],
+)->setLabel('Users')->setCloseOnSelect(false)
+
+//In render file:
 <livewire:multi-select
-    wire:model="userIds"
-    :multiSelectSettings="
-        \Mrjokermr\LivewireMultiSelect\Classes\MultiSelectSettings::simple(
-            source: [1 => 'Example user', 2 => 'Second user'],
-        )->setLabel('Users')->setCloseOnSelect(false)
-    "
+    wire:model.live="userIds"
+    :settings="$settings"
 ></livewire:multi-select>
 ```
 
 ### Via eloquent models:
 ```php
+use Mrjokermr\LivewireMultiSelect\Classes\SelectSettings;
+
+$settings = SelectSettings::eloquentModel(
+    class: \App\Models\User::class,
+    keyAttribute: 'id',
+    labelAttribute: 'name',
+    limit: 50, //Optional
+)->setLabel('Users')
+
+//In render file:
 <livewire:multi-select
-    wire:model="users"
-    :multiSelectSettings="
-        \Mrjokermr\LivewireMultiSelect\Classes\MultiSelectSettings::eloquentModel(
-            class: \App\Models\User::class,
-            keyAttribute: 'id',
-            labelAttribute: 'name',
-            limit: 50, //Optional
-        )->setLabel('Users')
-    "
+    wire:model.live="users"
+    :settings="$settings"
 ></livewire:multi-select>
 ```
 
 ### Handle value changes via Livewire Events:
 ```php
-    MultiSelectSettings::simple(
-        source: Chapter::all()->mapWithKeys(fn ($chapter) => [$chapter->id => $chapter->name])->toArray(),
-        event: 'event_filter_chapters_updated',
-    )->setLabel('Chapters')->setCloseOnSelect(false);
+use Mrjokermr\LivewireMultiSelect\Classes\SelectSettings;
 
-    //Event retreival after each value change:
-    #[On('event_filter_chapters_updated')]
-    public function multiSelectValueChanged(array $selection)
-    {
-        //implement code...
-    }
+SelectSettings::simple(
+    source: Chapter::all()->mapWithKeys(fn ($chapter) => [$chapter->id => $chapter->name])->toArray(),
+    event: 'event_filter_chapters_updated',
+)->setLabel('Chapters')->setCloseOnSelect(false);
+
+//Event retrieval after each value change:
+#[On('event_filter_chapters_updated')]
+public function multiSelectValueChanged(array $selection)
+{
+    //implement code...
+}
 ```
 
 **You might also set the ```baseQuery``` for setting the base filter for the given options.**
 ```php
+use Mrjokermr\LivewireMultiSelect\Classes\SelectSettings;
+
+$settings = SelectSettings::eloquentModel(
+    class: \App\Models\User::class,
+    keyAttribute: 'id',
+    labelAttribute: 'name',
+    baseQuery: \App\Models\User::where('email', 'LIKE', '%example.com%')
+)->setLabel('Users')
+
+//In render file:
 <livewire:multi-select
-    wire:model="users"
-    :multiSelectSettings="
-        \Mrjokermr\LivewireMultiSelect\Classes\MultiSelectSettings::eloquentModel(
-            class: \App\Models\User::class,
-            keyAttribute: 'id',
-            labelAttribute: 'name',
-            baseQuery: \App\Models\User::where('email', 'LIKE', '%example.com%')
-        )->setLabel('Users')
-    "
+    wire:model.live="users"
+    :settings="$settings"
 ></livewire:multi-select>
 ```
 
