@@ -25,14 +25,29 @@
         @if (!empty($settings->getPlaceholder()))
             placeholder="{{ $settings->getPlaceholder() }}"
         @endif
-        @if (!empty($name))
-            name="{{ $name }}"
-        @endifß
         autocomplete="off"
         role="combobox"
         :aria-expanded="open"
         aria-controls="multi_select_options_{{ $settings->id }}"
     />
+
+    @if (!empty($name))
+        @if ($settings->isSingleValueMode())
+            <input
+                type="hidden"
+                name="{{ $name }}"
+                value="{{ $singleSelectionValue['key'] ?? null }}"
+            />
+        @elseif (is_array($this->selected))
+            @foreach ($this->selected as $selectedValue)
+                <input
+                    type="hidden"
+                    name="{{ $name }}[]"
+                    value="{{ $selectedValue }}"
+                />
+            @endforeach
+        @endif
+    @endif
 
     <div
         id="multi_select_options_{{ $settings->id }}"
