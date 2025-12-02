@@ -56,6 +56,7 @@ return [
     - [Search Functionality](#search-functionality)
     - [Livewire Events](#livewire-events)
     - [Pre-filtering with Base Query](#pre-filtering-with-base-query)
+    - [Usage with static forms (Without wire:model) & Error message handling](#usage-with-static-forms-without-wiremodel--error-message-handling)
 - [Customization](#customization)
     - [Customizing the Label](#customizing-the-label)
     - [Setting the Placeholder](#setting-the-placeholder)
@@ -231,7 +232,7 @@ public function getSettings()
 />
 ```
 
-### Usage static forms (Without wire:model) & Error message handling
+### Usage with static forms (Without wire:model) & Error message handling
 When setting the `name=`, the input element will contain the input name. And also errors will be displayed.
 ```php
 // In your Blade view
