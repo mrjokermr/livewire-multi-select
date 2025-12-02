@@ -60,6 +60,7 @@ return [
 - [Customization](#customization)
     - [Customizing the Label](#customizing-the-label)
     - [Setting the Placeholder](#setting-the-placeholder)
+    - [Enable/Disable input error display](#enabledisable-input-error-display)
     - [Overriding CSS Classes](#overriding-css-classes)
     - [Close on Select Behavior](#close-on-select-behavior)
 
@@ -267,6 +268,13 @@ Set a display label for the input. It can be omitted by not calling the method.
 ### Setting the Placeholder
 ```php
 ->setPlaceholder('Select users')
+```
+
+### Enable/Disable input error display
+You can configure this value in the config file but you might also change the behavior via:
+
+```php
+->setDisplayError(value: true);
 ```
 
 ### Overriding CSS Classes
