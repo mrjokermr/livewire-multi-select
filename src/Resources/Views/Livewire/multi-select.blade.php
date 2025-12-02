@@ -41,10 +41,21 @@
         role="listbox"
     >
         @if ($settings->showSearch())
-            <input class="" wire:model.live.debounce.250ms="searchValue"/>
+            <input
+                @if(!empty($settings->cssClasses['input_search']))
+                    class="{{ $settings->cssClasses['input_search'] }}"
+                @else
+                    style="width: 100%; position: relative;"
+                @endif
+                wire:model.live.debounce.250ms="searchValue"
+            />
         @endif
 
-        <ul>
+        <ul
+            @if(!empty($settings->cssClasses['list_box_option_wrapper']))
+                class="{{ $settings->cssClasses['list_box_option_wrapper'] }}"
+            @endif
+        >
             @foreach ($options as $value => $label)
                 <li
                     wire:key="{{$settings->id}}_option_{{$value}}"

@@ -25,10 +25,12 @@ return [
 
     'css_classes' => [
         'input' => null,
+        'input_search' => null, //when '$setting->enableSearch()' is applied
         'input_error_label' => null,
         'label' => null,
-        'list_box' => null,
-        'list_box_option' => null,
+        'list_box' => null, //container
+        'list_box_option_wrapper' => null, //ul
+        'list_box_option' => null, //li
     ],
 
     'translations' => [
@@ -82,6 +84,7 @@ $settings = SelectSettings::eloquentModel(
 ```
 
 ### Handle value changes via Livewire Events:
+You might want to handle values changes via Livewire events, but it is not required since wire:model(.live) will also trigger value changes.
 ```php
 use Mrjokermr\LivewireMultiSelect\Classes\SelectSettings;
 
@@ -134,12 +137,17 @@ $settings = SelectSettings::eloquentModel(
 ```->setCssClasses()```
 
 **Example:**
+Each ```null``` value will default to config value.
+
 ```php
 ->setCssClasses(
     input: 'input',
-    label: 'label',
+    inputSearch: 'input-search',
+    label: null,
     listBox: 'list-box',
-    listBoxOption: 'list-box-option',
+    listBoxOptionWrapper: 'list-box-option-wrapper', //ul
+    listBoxOption: 'list-box-option', //li
+    inputErrorLabel: 'input-error-label',
 )
 ```
 This way you can style each individual multi select box

@@ -95,10 +95,21 @@ class SelectSettings implements Wireable
         return $this;
     }
 
-    public function setCssClasses(?string $input = null, ?string $label = null, ?string $listBox = null, ?string $listBoxOption = null, ?string $inputErrorLabel = null): self
-    {
+    public function setCssClasses(
+        ?string $input = null,
+        ?string $inputSearch = null,
+        ?string $label = null,
+        ?string $listBox = null,
+        ?string $listBoxOptionWrapper = null,
+        ?string $listBoxOption = null,
+        ?string $inputErrorLabel = null
+    ): self {
         if ($input !== null) {
             $this->cssClasses['input'] = $input;
+        }
+
+        if ($inputSearch !== null) {
+            $this->cssClasses['input_search'] = $inputSearch;
         }
 
         if ($label !== null) {
@@ -107,6 +118,10 @@ class SelectSettings implements Wireable
 
         if ($listBox !== null) {
             $this->cssClasses['list_box'] = $listBox;
+        }
+
+        if ($listBoxOptionWrapper !== null) {
+            $this->cssClasses['list_box_option_wrapper'] = $listBoxOptionWrapper;
         }
 
         if ($listBoxOption !== null) {
