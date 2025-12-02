@@ -25,6 +25,7 @@ The published `config/multi-select.php` file allows you to set default behaviors
 <?php
 return [
     'close_on_select_default' => true,
+    'display_input_error_default' => true,
 
     'css_classes' => [
         'input' => null,
@@ -42,13 +43,12 @@ return [
 ];
 ```
 - **`close_on_select_default`**: Determines if the dropdown should close automatically after selecting an option.
+- **`display_input_error_default`**: Determines if by default input error messages should be displayed.
 - **`css_classes`**: Define the CSS classes for each part of the component to match your project's design system (e.g., Tailwind CSS, Bootstrap).
 - **`translations`**: Set the translation key for the "Selected" text displayed on the input. For example, you can set it to a key from your Laravel translation files.
 
 ## Quick nav
 
-- [Installation](#installation)
-- [Configuration](#configuration)
 - [Usage & Examples](#usage--examples)
     - [Simple Array](#simple-array)
     - [Eloquent Models](#eloquent-models)
@@ -228,6 +228,24 @@ public function getSettings()
 <livewire:multi-select
     wire:model.live="users"
     :settings="$this->getSettings()"
+/>
+```
+
+### Usage static forms (Without wire:model) & Error message handling
+When setting the `name=`, the input element will contain the input name. And also errors will be displayed.
+```php
+// In your Blade view
+<livewire:multi-select
+    name="name"
+    :settings="
+        \Mrjokermr\LivewireMultiSelect\Classes\SelectSettings::eloquentModel(
+            class: \App\Models\CuttingName::class,
+            keyAttribute: 'id',
+            labelAttribute: 'name',
+        )
+        ->setInitialValue(value: $cuttingName->id, label: $cuttingName->name)
+        ->setCssClasses(inputErrorLabel: 'label-error')
+    "
 />
 ```
 

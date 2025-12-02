@@ -22,9 +22,11 @@ class SelectSettings implements Wireable
     private bool $closeOnSelect = true;
     private bool $withSearch = false;
     private string|array|null $searchAttributes = null;
+    private ?array $initialValue = null;
 
     private ?string $eventName = null;
     private bool $singleValue = false;
+    private ?bool $displayError = true;
 
     public function __construct()
     {
@@ -37,6 +39,7 @@ class SelectSettings implements Wireable
     {
         $instance = (new self());
         $instance->eventName = $event;
+        $instance->displayError = (bool) config('multi-select.display_input_error_default');
 
         return $instance;
     }
@@ -179,9 +182,35 @@ class SelectSettings implements Wireable
         return $this;
     }
 
+    public function setDisplayError(bool $value = true): self
+    {
+        $this->displayError = $value;
+        return $this;
+    }
+
     public function getCloseOnSelect(): bool
     {
         return $this->closeOnSelect;
+    }
+
+    public function getDisplayError(): bool
+    {
+        return $this->displayError;
+    }
+
+    public function setInitialValue(mixed $value, mixed $label): self
+    {
+        $this->initialValue = [
+            'key' => $value,
+            'value' => $label
+        ];
+
+        return $this;
+    }
+
+    public function getInitialValue(): ?array
+    {
+        return $this->initialValue;
     }
 
     public function getOptions(?string $searchValue = null): array
@@ -268,6 +297,8 @@ class SelectSettings implements Wireable
             'multiSelectEloquentSettings' => $this->multiSelectEloquentSettings?->toLivewire(),
             'singleValue' => $this->singleValue,
             'placeholder' => $this->placeholder ?? null,
+            'initialValue' => $this->initialValue ?? null,
+            'displayError' => $this->displayError ?? null,
         ];
     }
 
@@ -287,6 +318,8 @@ class SelectSettings implements Wireable
         $instance->multiSelectEloquentSettings = isset($value['multiSelectEloquentSettings']) ? SelectEloquentSettings::fromLivewire(value: $value['multiSelectEloquentSettings']) : null;
         $instance->singleValue = $value['singleValue'];
         $instance->placeholder = $value['placeholder'] ?? null;
+        $instance->initialValue = $value['initialValue'] ?? null;
+        $instance->displayError = $value['displayError'] ?? (bool) config('multi-select.display_input_error_default');
 
         return $instance;
     }

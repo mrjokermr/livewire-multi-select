@@ -87,7 +87,15 @@
         </ul>
     </div>
 
+    @if (!empty($name) && $settings->getDisplayError())
+        @error($name)
+            <p @if (isset($settings->cssClasses['input_error_label'])) class="{{ $settings->cssClasses['input_error_label'] }}" @else style="color: red;" @endif>
+                {{ $message }}
+            </p>
+        @enderror
+
+    @endif
     <style>[x-cloak] {
-            display: none !important
-        }</style>
+        display: none !important
+    }</style>
 </div>

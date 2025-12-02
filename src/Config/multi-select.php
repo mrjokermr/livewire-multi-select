@@ -1,6 +1,7 @@
 <?php
 return [
     'close_on_select_default' => true,
+    'display_input_error_default' => true,
 
     'css_classes' => [
         'input' => null,

@@ -28,10 +28,31 @@ class MultiSelect extends Component
             }
         }
 
-        $this->setOptions();
+        $this->loadOptionsAndSetInitialValue();
+
         $this->selectedTranslationKey = config('multi-select.translations.selected');
 
         $this->selectedString();
+    }
+
+    private function loadOptionsAndSetInitialValue()
+    {
+        $initialValue = $this->settings->getInitialValue();
+        if ($initialValue !== null) {
+            if ($this->settings->isSingleValueMode()) {
+                $this->singleSelectionValue = $initialValue;
+
+                $this->setOptions();
+            } else {
+                $this->setOptions();
+                $this->selected[] = $initialValue['key'];
+                if (!in_array($initialValue['key'], $this->options)) {
+                    $this->options[$initialValue['key']] = $initialValue['value'];
+                }
+            }
+        } else {
+            $this->setOptions();
+        }
     }
 
     public function updatedSearchValue(string $value)
