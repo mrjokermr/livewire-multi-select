@@ -75,6 +75,7 @@ Use `\Mrjokermr\LivewireMultiSelect\Classes\SelectSettings::simple()` to create 
 ```php
 // In your Livewire Component
 use Mrjokermr\LivewireMultiSelect\Classes\SelectSettings;
+public array $userIds = [];
 
 public function getSettings()
 {
@@ -100,6 +101,7 @@ Use `\Mrjokermr\LivewireMultiSelect\Classes\SelectSettings::eloquentModel()` to 
 // In your Livewire Component
 use Mrjokermr\LivewireMultiSelect\Classes\SelectSettings;
 use App\Models\User;
+public array $userIds = [];
 
 public function getSettings()
 {
@@ -268,6 +270,11 @@ Set a display label for the input. It can be omitted by not calling the method.
 ### Setting the Placeholder
 ```php
 ->setPlaceholder('Select users')
+```
+
+### Change the 'selected' text or overwrite the 'translations.selected' configured in the config file
+```php
+->setSelectedText('Selected users')
 ```
 
 ### Enable/Disable input error display

@@ -141,13 +141,14 @@ class MultiSelect extends Component
         if ($this->settings->isSingleValueMode()) {
             $value = $this->singleSelectionValue['value'] ?? '';
         } else {
-
             if (count($this->selected) === 0 && !empty($this->settings->getPlaceholder())) {
                 return $this->settings->getPlaceholder();
             }
 
             $value = '';
-            if ($this->selectedTranslationKey) {
+            if ($this->settings->getSelectedText() !== null) {
+                $value .= $this->settings->getSelectedText().' ';
+            } elseif ($this->selectedTranslationKey) {
                 $translationValue = __($this->selectedTranslationKey);
                 if (trim($translationValue) === '' || $translationValue === null) {
                     $translationValue = 'Selected';

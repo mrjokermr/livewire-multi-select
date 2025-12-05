@@ -27,6 +27,7 @@ class SelectSettings implements Wireable
     private ?string $eventName = null;
     private bool $singleValue = false;
     private ?bool $displayError = true;
+    private ?string $selectedText = null;
 
     public function __construct()
     {
@@ -100,6 +101,17 @@ class SelectSettings implements Wireable
     {
         $this->placeholder = $placeholder;
         return $this;
+    }
+
+    public function setSelectedText(string $selectedText): self
+    {
+        $this->selectedText = $selectedText;
+        return $this;
+    }
+
+    public function getSelectedText(): ?string
+    {
+        return $this->selectedText;
     }
 
     public function getPlaceholder(): ?string
@@ -299,6 +311,7 @@ class SelectSettings implements Wireable
             'placeholder' => $this->placeholder ?? null,
             'initialValue' => $this->initialValue ?? null,
             'displayError' => $this->displayError ?? null,
+            'selectedText' => $this->selectedText ?? null,
         ];
     }
 
@@ -320,6 +333,7 @@ class SelectSettings implements Wireable
         $instance->placeholder = $value['placeholder'] ?? null;
         $instance->initialValue = $value['initialValue'] ?? null;
         $instance->displayError = $value['displayError'] ?? (bool) config('multi-select.display_input_error_default');
+        $instance->selectedText = $value['selectedText'] ?? null;
 
         return $instance;
     }
