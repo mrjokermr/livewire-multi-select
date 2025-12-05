@@ -8,12 +8,11 @@
     }"
     style="position: relative; width: auto"
     @focusin="open=true"
-    @focusout.window="if(!$el.contains($event.relatedTarget)) open=false"
+    @click.away="open=false"
     @keydown.escape.window="open=false"
 >
     @if ($settings->label !== null)
-        <label for="input_search_{{ $settings->id }}"
-               class="{{ $settings->cssClasses['label'] }}">{{ $settings->label }}</label>
+        <label for="input_search_{{ $settings->id }}" class="{{ $settings->cssClasses['label'] }}">{{ $settings->label }}</label>
     @endif
     <input
         id="input_search_{{ $settings->id }}"
@@ -82,6 +81,7 @@
                     wire:key="{{$settings->id}}_option_{{$value}}"
                     @if ($settings->getCloseOnSelect() === true)
                         wire:click="toggleSelect('{{ $value }}')"
+                        @click.stop="open=false"
                     @else
                         @mousedown.prevent.stop="$wire.toggleSelect('{{ $value }}'); open=true"
                     @endif
@@ -108,7 +108,6 @@
                 {{ $message }}
             </p>
         @enderror
-
     @endif
     <style>[x-cloak] {
         display: none !important

@@ -28,6 +28,13 @@ class MultiSelect extends Component
             }
         }
 
+        if (
+            $this->name === null && $this->attributes->get(1) !== null
+            && $this->attributes->get(1)::class === 'Livewire\Attributes\Modelable'
+        ) {
+            $this->name = $this->modelableName();
+        }
+
         $this->loadOptionsAndSetInitialValue();
 
         $this->selectedTranslationKey = config('multi-select.translations.selected');
@@ -35,18 +42,31 @@ class MultiSelect extends Component
         $this->selectedString();
     }
 
+
+    public function modelableName(): ?string
+    {
+        foreach (\Livewire\store($this)->get('bindings') as $parentProp => $childProp) {
+            if ($childProp === 'selected') {
+                return $parentProp;
+            }
+        }
+
+        return null;
+    }
+
     private function loadOptionsAndSetInitialValue()
     {
         $initialValue = $this->settings->getInitialValue();
+
         if ($initialValue !== null) {
             if ($this->settings->isSingleValueMode()) {
                 $this->singleSelectionValue = $initialValue;
-
                 $this->setOptions();
             } else {
                 $this->setOptions();
                 $this->selected[] = $initialValue['key'];
-                if (!in_array($initialValue['key'], $this->options)) {
+
+                if (!array_key_exists($initialValue['key'], $this->options)) {
                     $this->options[$initialValue['key']] = $initialValue['value'];
                 }
             }
@@ -54,6 +74,7 @@ class MultiSelect extends Component
             $this->setOptions();
         }
     }
+
 
     public function updatedSearchValue(string $value)
     {
@@ -73,20 +94,33 @@ class MultiSelect extends Component
 
     public function toggleSelect($value)
     {
+        $value = (string) $value;
+
         if ($this->settings->isSingleValueMode()) {
             $this->selected = $value;
+
+            $label = $this->options[$value]
+                ?? $this->singleSelectionValue['value']
+                ?? '';
+
             $this->singleSelectionValue = [
                 'key' => $value,
-                'value' => $this->options[$value]
+                'value' => $label,
             ];
         } else {
-            if (!in_array($value, $this->selected)) {
-                $this->selected[] = $value;
+            // normalize selected to strings
+            $selected = array_map('strval', $this->selected ?? []);
+
+            $key = array_search($value, $selected, true);
+
+            if ($key === false) {
+                $selected[] = $value;
             } else {
-                $selected = $this->selected;
-                unset($selected[array_search($value, $selected)]);
-                $this->selected = $selected;
+                unset($selected[$key]);
+                $selected = array_values($selected);
             }
+
+            $this->selected = $selected;
         }
 
         if ($this->settings->getCloseOnSelect() && !empty($this->searchValue)) {
@@ -99,6 +133,7 @@ class MultiSelect extends Component
             $this->dispatch($eventName, selection: $this->selected);
         }
     }
+
 
     #[Computed]
     public function selectedString(): string
