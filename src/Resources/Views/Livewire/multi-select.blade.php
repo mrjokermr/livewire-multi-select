@@ -80,8 +80,11 @@
                 <li
                     wire:key="{{$settings->id}}_option_{{$value}}"
                     @if ($settings->getCloseOnSelect() === true)
-                        wire:click="toggleSelect('{{ $value }}')"
-                        @click.stop="open=false"
+                        @mousedown.prevent.stop="
+                            $wire.toggleSelect(@js($value));
+                            open = false;
+                            $nextTick(() => $refs.input?.blur());
+                        "
                     @else
                         @mousedown.prevent.stop="$wire.toggleSelect('{{ $value }}'); open=true"
                     @endif
