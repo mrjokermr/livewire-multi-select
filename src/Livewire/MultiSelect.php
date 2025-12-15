@@ -13,7 +13,6 @@ class MultiSelect extends Component
     public array $options = [];
     #[Modelable]
     public mixed $selected = [];
-    public ?array $singleSelectionValue = null;
     public ?string $selectedTranslationKey = null;
     public ?string $searchValue = null;
     public ?string $name = null;
@@ -42,7 +41,6 @@ class MultiSelect extends Component
         $this->selectedString();
     }
 
-
     public function modelableName(): ?string
     {
         foreach (\Livewire\store($this)->get('bindings') as $parentProp => $childProp) {
@@ -60,7 +58,9 @@ class MultiSelect extends Component
 
         if ($initialValue !== null) {
             if ($this->settings->isSingleValueMode()) {
-                $this->singleSelectionValue = $initialValue;
+                if ($this->selected !== $initialValue['key']) {
+                    $this->selected = $initialValue['key'];
+                }
                 $this->setOptions();
             } else {
                 $this->setOptions();
@@ -84,12 +84,31 @@ class MultiSelect extends Component
     private function setOptions()
     {
         $this->options = $this->settings->getOptions(searchValue: $this->searchValue);
-        if ($this->settings->isSingleValueMode() && $this->singleSelectionValue !== null) {
-            $valueInArray = ($this->options[$this->singleSelectionValue['key']] ?? null) !== null;
+        if ($this->settings->isSingleValueMode()) {
+            $initialValue = $this->settings->getInitialValue();
+            if ($initialValue['key'] ?? null === null || $initialValue['value'] ?? null === null) {
+                return;
+            }
+            $valueInArray = ($this->options[$initialValue['key']] ?? null) !== null;
             if (!$valueInArray) {
-                $this->options[$this->singleSelectionValue['key']] = $this->singleSelectionValue['value'];
+                $this->options[$initialValue['key']] = $initialValue['value'];
             }
         }
+    }
+
+    #[Computed]
+    public function singleSelectionValue(): ?array
+    {
+        if (! $this->settings->isSingleValueMode() || $this->selected === null) {
+            return null;
+        }
+
+        $key = (string) $this->selected;
+
+        // ensure label exists (fallback to empty string)
+        $label = $this->options[$key] ?? '';
+
+        return ['key' => $key, 'value' => $label];
     }
 
     public function toggleSelect($value)
@@ -98,15 +117,6 @@ class MultiSelect extends Component
 
         if ($this->settings->isSingleValueMode()) {
             $this->selected = $value;
-
-            $label = $this->options[$value]
-                ?? $this->singleSelectionValue['value']
-                ?? '';
-
-            $this->singleSelectionValue = [
-                'key' => $value,
-                'value' => $label,
-            ];
         } else {
             // normalize selected to strings
             $selected = array_map('strval', $this->selected ?? []);
@@ -134,12 +144,11 @@ class MultiSelect extends Component
         }
     }
 
-
     #[Computed]
     public function selectedString(): string
     {
         if ($this->settings->isSingleValueMode()) {
-            $value = $this->singleSelectionValue['value'] ?? '';
+            $value = $this->singleSelectionValue()['value'] ?? '';
         } else {
             if (count($this->selected) === 0 && !empty($this->settings->getPlaceholder())) {
                 return $this->settings->getPlaceholder();
