@@ -103,6 +103,10 @@ class MultiSelect extends Component
             return null;
         }
 
+        if (is_array($this->selected)) {
+            return null;
+        }
+
         $key = (string) $this->selected;
 
         // ensure label exists (fallback to empty string)
