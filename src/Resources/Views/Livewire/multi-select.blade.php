@@ -35,7 +35,7 @@
             <input
                 type="hidden"
                 name="{{ $name }}"
-                value="{{ $singleSelectionValue['key'] ?? null }}"
+                value="{{ $this->singleSelectionValue['key'] ?? null }}"
             />
         @elseif (is_array($this->selected))
             @foreach ($this->selected as $selectedValue)
